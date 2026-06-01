@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  /* ---- Colors ---- */
+  --color-primary: #2383E2;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F7F6F3;
+  --color-secondary-foreground: #37352F;
+  --color-accent: #EB5757;
+  --color-accent-foreground: #FFFFFF;
+  --color-muted: #F7F6F3;
+  --color-muted-foreground: #787774;
+  --color-background: #FFFFFF;
+  --color-foreground: #37352F;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #37352F;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #37352F;
+  --color-border: #E3E2DE;
+  --color-input: #E3E2DE;
+  --color-ring: #2383E2;
+  --color-destructive: #EB5757;
+  --color-destructive-foreground: #FFFFFF;
+  --color-success: #4DAB9A;
+  --color-warning: #CB912F;
+
+  /* ---- Fonts ---- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Outfit', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-serif: 'Playfair Display', Georgia, serif;
+
+  /* ---- Radius ---- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* ---- Shadows ---- */
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-overlay: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+  /* ---- Animations ---- */
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-slide-down: slide-down 0.3s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+  --animate-spin-slow: spin 3s linear infinite;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ---- Base Styles ---- */
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground);
+}
+
+/* ---- Dark mode ---- */
+.dark {
+  --color-primary: #529CCA;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #202020;
+  --color-secondary-foreground: #E3E2DE;
+  --color-muted: #2D2D2D;
+  --color-muted-foreground: #9B9A97;
+  --color-background: #191919;
+  --color-foreground: #E3E2DE;
+  --color-card: #202020;
+  --color-card-foreground: #E3E2DE;
+  --color-popover: #252525;
+  --color-popover-foreground: #E3E2DE;
+  --color-border: #373737;
+  --color-input: #373737;
+  --color-ring: #529CCA;
+}
+
+/* ---- Selection ---- */
+::selection {
+  background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-foreground);
+}
