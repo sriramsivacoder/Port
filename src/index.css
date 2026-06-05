@@ -141,3 +141,119 @@ body {
   background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
   color: var(--color-foreground);
 }
+
+/* ---- Portfolio template personalities ---- */
+.pf-portfolio {
+  min-height: 100%;
+}
+
+.pf-portfolio section {
+  position: relative;
+}
+
+.pf-template-modern {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--pf-accent) 10%, transparent), transparent 34%),
+    var(--pf-bg);
+}
+
+.pf-template-modern section > h2,
+.pf-template-modern section h2:first-child {
+  display: inline-flex;
+  border-bottom: 3px solid var(--pf-accent);
+  padding-bottom: 0.35rem;
+}
+
+.pf-template-developer {
+  background:
+    linear-gradient(color-mix(in srgb, var(--pf-border) 28%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--pf-border) 28%, transparent) 1px, transparent 1px),
+    var(--pf-bg);
+  background-size: 28px 28px;
+}
+
+.pf-template-developer section {
+  border-left: 2px solid var(--pf-accent);
+  padding-left: 1.25rem;
+}
+
+.pf-template-creative section:nth-child(even) {
+  margin-left: clamp(0rem, 5vw, 4rem);
+}
+
+.pf-template-creative section:nth-child(odd) {
+  margin-right: clamp(0rem, 4vw, 3rem);
+}
+
+.pf-template-editorial {
+  background: var(--pf-bg);
+}
+
+.pf-template-editorial section {
+  border-top: 1px solid var(--pf-border);
+}
+
+.pf-template-editorial section:first-child {
+  min-height: 44vh;
+  display: flex;
+  align-items: center;
+  border-top: 0;
+}
+
+.pf-template-editorial h1 {
+  max-width: 11ch;
+}
+
+.pf-template-editorial h2 {
+  letter-spacing: 0;
+}
+
+.pf-template-neon {
+  background:
+    radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--pf-accent) 20%, transparent), transparent 32%),
+    var(--pf-bg);
+}
+
+.pf-template-neon section {
+  border-color: color-mix(in srgb, var(--pf-accent) 44%, var(--pf-border));
+}
+
+.pf-template-neon [class*="rounded-"] {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--pf-accent) 18%, transparent), 0 18px 40px rgba(8, 47, 73, 0.16);
+}
+
+.pf-template-neon h1,
+.pf-template-neon h2 {
+  text-transform: uppercase;
+}
+
+.pf-template-executive {
+  background: var(--pf-bg);
+}
+
+.pf-template-executive section {
+  border-top: 1px solid var(--pf-border);
+}
+
+.pf-template-executive section:first-child {
+  border-top: 0;
+}
+
+.pf-template-executive h1 {
+  letter-spacing: 0;
+}
+
+.pf-template-executive [class*="rounded-"] {
+  border-radius: var(--pf-radius);
+}
+
+@media (max-width: 767px) {
+  .pf-template-creative section:nth-child(n) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .pf-template-editorial section:first-child {
+    min-height: auto;
+  }
+}

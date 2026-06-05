@@ -1,15 +1,18 @@
 import { motion } from 'motion/react';
 import { designColorKey } from '@/lib/design';
-import { designToCssVars, getAnimationVariants } from './utils';
+import { designToCssVars, getAnimationEase, getAnimationVariants, normalizeAnimation } from './utils';
 import { HeroSection } from './sections/HeroSection';
 import { AboutSection, SkillsSection, ExperienceSection, ProjectsSection, EducationSection, CertificationsSection, ContactSection, } from './sections/ContentSections';
-import { NotionTemplate, MinimalTemplate, DeveloperTemplate, ModernTemplate, CreativeTemplate, } from './layouts/index';
+import { NotionTemplate, MinimalTemplate, DeveloperTemplate, ModernTemplate, CreativeTemplate, EditorialTemplate, NeonTemplate, ExecutiveTemplate, } from './layouts/index';
 const LAYOUTS = {
     notion: NotionTemplate,
     minimal: MinimalTemplate,
     developer: DeveloperTemplate,
     modern: ModernTemplate,
     creative: CreativeTemplate,
+    editorial: EditorialTemplate,
+    neon: NeonTemplate,
+    executive: ExecutiveTemplate,
 };
 function renderSection(section, props) {
     const common = {
@@ -50,7 +53,7 @@ export function TemplateEngine({ content, design, sections, templateId, themeMod
         .sort((a, b) => a.order - b.order);
     const isDark = themeMode === 'dark' ||
         (themeMode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    return (<div key={previewKey} className={`pf-portfolio min-h-full ${isDark ? 'pf-dark' : ''}`} style={{
+    return (<div key={previewKey} className={`pf-portfolio pf-template-${templateId} min-h-full ${isDark ? 'pf-dark' : ''}`} style={{
             ...cssVars,
             backgroundColor: colors.background,
             color: colors.text,
@@ -59,11 +62,12 @@ export function TemplateEngine({ content, design, sections, templateId, themeMod
             lineHeight: typography.lineHeight,
         }}>
       <Layout>
-        {visibleSections.map((section) => {
-            const variants = getAnimationVariants(section.animation.type);
-            const duration = (section.animation.duration ?? 500) / 1000;
-            const delay = (section.animation.delay ?? 0) / 1000;
-            return (<motion.div key={section.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={variants} transition={{ duration, delay, ease: 'easeOut' }}>
+        {visibleSections.map((section, index) => {
+            const animation = normalizeAnimation(section.animation, index);
+            const variants = getAnimationVariants(animation.type, animation.distance);
+            const duration = animation.duration / 1000;
+            const delay = animation.delay / 1000;
+            return (<motion.div key={section.id} initial="hidden" whileInView="visible" viewport={{ once: !animation.repeatOnScroll, margin: '-50px' }} variants={variants} transition={{ duration, delay, ease: getAnimationEase(animation.easing) }} style={{ transformStyle: 'preserve-3d' }}>
               {renderSection(section, {
                     content,
                     design,

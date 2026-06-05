@@ -4,20 +4,20 @@ import { generateId } from '@/lib/utils';
 import { DEFAULT_SECTION_ORDER, SECTION_LABELS } from '@/lib/constants';
 import { TEMPLATE_COLORS, TEMPLATE_TYPOGRAPHY } from '@/shared/template.js';
 function createDefaultDesign(templateId = 'notion') {
-    const colors = TEMPLATE_COLORS[templateId].light;
-    const typography = TEMPLATE_TYPOGRAPHY[templateId];
+    const colors = (TEMPLATE_COLORS[templateId] ?? TEMPLATE_COLORS.notion).light;
+    const typography = TEMPLATE_TYPOGRAPHY[templateId] ?? TEMPLATE_TYPOGRAPHY.notion;
     return {
         colors,
         typography,
         spacing: {
             sectionPadding: 64,
-            contentMaxWidth: 960,
-            cardGap: 24,
+            contentMaxWidth: templateId === 'creative' || templateId === 'editorial' ? 1100 : templateId === 'executive' ? 1040 : 960,
+            cardGap: templateId === 'executive' ? 18 : 24,
         },
         borderShadow: {
-            borderRadius: 12,
-            borderWidth: 1,
-            shadowIntensity: 'subtle',
+            borderRadius: templateId === 'notion' || templateId === 'neon' ? 8 : templateId === 'executive' ? 6 : 12,
+            borderWidth: templateId === 'neon' ? 2 : 1,
+            shadowIntensity: templateId === 'minimal' || templateId === 'executive' ? 'subtle' : 'medium',
         },
         animations: {},
     };
@@ -29,7 +29,7 @@ function createDefaultSections() {
         title: SECTION_LABELS[type],
         visible: true,
         order: index,
-        animation: { type: 'fade', duration: 0.5, delay: 0 },
+        animation: { type: 'rise', duration: 650, delay: index * 60, distance: 28, easing: 'smooth', repeatOnScroll: false },
     }));
 }
 export const usePortfolioStore = create()(immer((set) => ({
@@ -94,14 +94,18 @@ export const usePortfolioStore = create()(immer((set) => ({
     setSelectedTemplate: (template) => set((s) => {
         s.selectedTemplate = template;
         // Apply template default colors and typography
-        s.design.colors = TEMPLATE_COLORS[template][s.themeMode === 'dark' ? 'dark' : 'light'];
-        s.design.typography = TEMPLATE_TYPOGRAPHY[template];
+        const templateColors = TEMPLATE_COLORS[template] ?? TEMPLATE_COLORS.notion;
+        s.design.colors = templateColors[s.themeMode === 'dark' ? 'dark' : 'light'];
+        s.design.typography = TEMPLATE_TYPOGRAPHY[template] ?? TEMPLATE_TYPOGRAPHY.notion;
+        s.design.spacing = createDefaultDesign(template).spacing;
+        s.design.borderShadow = createDefaultDesign(template).borderShadow;
         s.isDirty = true;
     }),
     setThemeMode: (mode) => set((s) => {
         s.themeMode = mode;
         const colorMode = mode === 'dark' ? 'dark' : 'light';
-        s.design.colors = TEMPLATE_COLORS[s.selectedTemplate][colorMode];
+        const templateColors = TEMPLATE_COLORS[s.selectedTemplate] ?? TEMPLATE_COLORS.notion;
+        s.design.colors = templateColors[colorMode];
         s.isDirty = true;
     }),
     setProfileImageUrl: (url) => set((s) => {
@@ -150,7 +154,7 @@ export const usePortfolioStore = create()(immer((set) => ({
             title: SECTION_LABELS[type],
             visible: true,
             order: s.sections.length,
-            animation: { type: 'fade', duration: 0.5, delay: 0 },
+            animation: { type: 'rise', duration: 650, delay: s.sections.length * 60, distance: 28, easing: 'smooth', repeatOnScroll: false },
         };
         s.sections.push(newSection);
         s.isDirty = true;

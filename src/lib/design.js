@@ -11,7 +11,7 @@ export const COLOR_FIELDS = [
 ];
 /** Ensure all color keys exist (partial palettes from old saves still work). */
 export function ensureColorSettings(colors, templateId = 'notion', themeMode = 'light') {
-    const defaults = TEMPLATE_COLORS[templateId][themeMode];
+    const defaults = (TEMPLATE_COLORS[templateId] ?? TEMPLATE_COLORS.notion)[themeMode];
     return {
         primary: colors?.primary ?? defaults.primary,
         secondary: colors?.secondary ?? defaults.secondary,

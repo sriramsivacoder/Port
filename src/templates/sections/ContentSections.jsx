@@ -5,11 +5,11 @@ function SectionHeading({ title }) {
     </h2>);
 }
 export function AboutSection({ content, editable, onContentChange }) {
-    const { about } = content;
+    const about = content.about ?? { heading: 'About Me', paragraphs: [] };
     return (<section className="border-t border-[var(--pf-border)] py-[var(--pf-section-padding)]">
       <InlineEditable as="h2" value={about.heading} onChange={(heading) => onContentChange?.({ about: { ...about, heading } })} disabled={!editable} className="mb-6 text-2xl font-[var(--pf-heading-weight)] text-[var(--pf-primary)]"/>
       <div className="space-y-4 text-[var(--pf-text-secondary)]">
-        {about.paragraphs.map((para, i) => (<InlineEditable key={i} as="p" value={para} onChange={(text) => {
+        {(about.paragraphs ?? []).map((para, i) => (<InlineEditable key={i} as="p" value={para} onChange={(text) => {
                 const paragraphs = [...about.paragraphs];
                 paragraphs[i] = text;
                 onContentChange?.({ about: { ...about, paragraphs } });
@@ -23,7 +23,9 @@ export function AboutSection({ content, editable, onContentChange }) {
     </section>);
 }
 export function SkillsSection({ content }) {
-    const { skills } = content;
+    const skills = Array.isArray(content.skills) ? content.skills : [];
+    if (!skills.length)
+        return null;
     return (<section className="border-t border-[var(--pf-border)] py-[var(--pf-section-padding)]">
       <SectionHeading title="Skills"/>
       <div className="grid gap-6" style={{ gap: 'var(--pf-card-gap)' }}>
@@ -41,7 +43,9 @@ export function SkillsSection({ content }) {
     </section>);
 }
 export function ExperienceSection({ content }) {
-    const { experience } = content;
+    const experience = Array.isArray(content.experience) ? content.experience : [];
+    if (!experience.length)
+        return null;
     return (<section className="border-t border-[var(--pf-border)] py-[var(--pf-section-padding)]">
       <SectionHeading title="Experience"/>
       <div className="space-y-6" style={{ gap: 'var(--pf-card-gap)' }}>
@@ -61,7 +65,9 @@ export function ExperienceSection({ content }) {
     </section>);
 }
 export function ProjectsSection({ content }) {
-    const { projects } = content;
+    const projects = Array.isArray(content.projects) ? content.projects : [];
+    if (!projects.length)
+        return null;
     return (<section className="border-t border-[var(--pf-border)] py-[var(--pf-section-padding)]">
       <SectionHeading title="Projects"/>
       <div className="grid gap-4 sm:grid-cols-2" style={{ gap: 'var(--pf-card-gap)' }}>
@@ -75,7 +81,9 @@ export function ProjectsSection({ content }) {
     </section>);
 }
 export function EducationSection({ content }) {
-    const { education } = content;
+    const education = Array.isArray(content.education) ? content.education : [];
+    if (!education.length)
+        return null;
     return (<section className="border-t border-[var(--pf-border)] py-[var(--pf-section-padding)]">
       <SectionHeading title="Education"/>
       <div className="space-y-4">
@@ -92,7 +100,7 @@ export function EducationSection({ content }) {
     </section>);
 }
 export function CertificationsSection({ content }) {
-    const { certifications } = content;
+    const certifications = Array.isArray(content.certifications) ? content.certifications : [];
     if (certifications.length === 0)
         return null;
     return (<section className="border-t border-[var(--pf-border)] py-[var(--pf-section-padding)]">
@@ -106,7 +114,7 @@ export function CertificationsSection({ content }) {
     </section>);
 }
 export function ContactSection({ content }) {
-    const { contact } = content;
+    const contact = content.contact ?? {};
     const items = [
         { label: 'Email', value: contact.email },
         { label: 'Phone', value: contact.phone },

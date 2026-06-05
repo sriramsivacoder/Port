@@ -45,7 +45,11 @@ export function WizardPage() {
     });
     const stepIndex = WIZARD_STEPS.findIndex((s) => s.id === currentStep);
     const handleResumeContinue = async () => {
-        if (!resumeFile || !portfolioId)
+        if (!resumeFile) {
+            setStep('github');
+            return;
+        }
+        if (!portfolioId)
             return;
         setIsParsingResume(true);
         try {
@@ -67,6 +71,23 @@ export function WizardPage() {
     const runGeneration = async () => {
         if (!portfolioId)
             return;
+        if (githubUrl && !isGitHubUrlOrUsername(githubUrl)) {
+            toast({
+                title: 'Invalid GitHub profile',
+                description: 'Enter a valid GitHub URL or username, or leave it blank.',
+                variant: 'destructive',
+            });
+            setStep('github');
+            return;
+        }
+        if (linkedinUrl && !isLinkedInUrlOrHandle(linkedinUrl)) {
+            toast({
+                title: 'Invalid LinkedIn profile',
+                description: 'Enter a valid LinkedIn URL or handle, or leave it blank.',
+                variant: 'destructive',
+            });
+            return;
+        }
         setStep('processing');
         setProcessingError(null);
         try {
@@ -111,7 +132,7 @@ export function WizardPage() {
         {currentStep === 'resume' && (<motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
             <Card>
               <CardHeader>
-                <CardTitle>Upload Resume</CardTitle>
+                <CardTitle>Add Resume</CardTitle>
                 <CardDescription>
                   Required — PDF or DOCX. We extract your profile, experience, and contact links
                   (including GitHub and LinkedIn when present).
@@ -133,12 +154,12 @@ export function WizardPage() {
                     </>)}
                 </div>
                 <div className="flex justify-end">
-                  <Button onClick={handleResumeContinue} disabled={!resumeFile || !portfolioId || isParsingResume}>
+                  <Button onClick={handleResumeContinue} disabled={!portfolioId || isParsingResume}>
                     {isParsingResume ? (<>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                         Parsing resume...
                       </>) : (<>
-                        Continue
+                        {resumeFile ? 'Parse & Continue' : 'Skip Resume'}
                         <ArrowRight className="ml-2 h-4 w-4"/>
                       </>)}
                   </Button>
