@@ -88,6 +88,12 @@
 /* ---- Base Styles ---- */
 * {
   border-color: var(--color-border);
+  box-sizing: border-box;
+}
+
+html {
+  /* Prevent horizontal scroll caused by overflowing children */
+  overflow-x: hidden;
 }
 
 body {
@@ -96,6 +102,7 @@ body {
   background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* ---- Scrollbar ---- */
@@ -142,15 +149,37 @@ body {
   color: var(--color-foreground);
 }
 
-/* ---- Portfolio template personalities ---- */
+/* ============================================================
+   Portfolio Template Styles — pf-portfolio namespace
+   The TemplateEngine applies .pf-dark for dark mode portfolios.
+   All --pf-* CSS variables are set via inline styles by
+   designToCssVars() in templates/utils.js
+   ============================================================ */
+
 .pf-portfolio {
   min-height: 100%;
+  /* Prevent content from overflowing on narrow viewports */
+  overflow-x: hidden;
+  word-break: break-word;
 }
 
 .pf-portfolio section {
   position: relative;
 }
 
+/* Ensure images within portfolio sections don't overflow */
+.pf-portfolio img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---- Dark mode for published portfolios (pf-dark class) ---- */
+/* These override the --pf-* CSS vars set by the design system */
+.pf-dark {
+  color-scheme: dark;
+}
+
+/* ---- Template: Modern ---- */
 .pf-template-modern {
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--pf-accent) 10%, transparent), transparent 34%),
@@ -164,6 +193,7 @@ body {
   padding-bottom: 0.35rem;
 }
 
+/* ---- Template: Developer ---- */
 .pf-template-developer {
   background:
     linear-gradient(color-mix(in srgb, var(--pf-border) 28%, transparent) 1px, transparent 1px),
@@ -174,17 +204,28 @@ body {
 
 .pf-template-developer section {
   border-left: 2px solid var(--pf-accent);
-  padding-left: 1.25rem;
+  padding-left: 1rem;
 }
 
-.pf-template-creative section:nth-child(even) {
-  margin-left: clamp(0rem, 5vw, 4rem);
+@media (min-width: 640px) {
+  .pf-template-developer section {
+    padding-left: 1.25rem;
+  }
 }
 
-.pf-template-creative section:nth-child(odd) {
-  margin-right: clamp(0rem, 4vw, 3rem);
+/* ---- Template: Creative ---- */
+/* Only apply offsets at tablet+ to avoid mobile overflow */
+@media (min-width: 768px) {
+  .pf-template-creative section:nth-child(even) {
+    margin-left: clamp(0rem, 5vw, 4rem);
+  }
+
+  .pf-template-creative section:nth-child(odd) {
+    margin-right: clamp(0rem, 4vw, 3rem);
+  }
 }
 
+/* ---- Template: Editorial ---- */
 .pf-template-editorial {
   background: var(--pf-bg);
 }
@@ -194,20 +235,32 @@ body {
 }
 
 .pf-template-editorial section:first-child {
-  min-height: 44vh;
-  display: flex;
-  align-items: center;
   border-top: 0;
 }
 
+@media (min-width: 640px) {
+  .pf-template-editorial section:first-child {
+    min-height: 44vh;
+    display: flex;
+    align-items: center;
+  }
+}
+
 .pf-template-editorial h1 {
-  max-width: 11ch;
+  max-width: 18ch;
+}
+
+@media (min-width: 768px) {
+  .pf-template-editorial h1 {
+    max-width: 11ch;
+  }
 }
 
 .pf-template-editorial h2 {
   letter-spacing: 0;
 }
 
+/* ---- Template: Neon ---- */
 .pf-template-neon {
   background:
     radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--pf-accent) 20%, transparent), transparent 32%),
@@ -227,6 +280,7 @@ body {
   text-transform: uppercase;
 }
 
+/* ---- Template: Executive ---- */
 .pf-template-executive {
   background: var(--pf-bg);
 }
@@ -245,15 +299,4 @@ body {
 
 .pf-template-executive [class*="rounded-"] {
   border-radius: var(--pf-radius);
-}
-
-@media (max-width: 767px) {
-  .pf-template-creative section:nth-child(n) {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .pf-template-editorial section:first-child {
-    min-height: auto;
-  }
 }

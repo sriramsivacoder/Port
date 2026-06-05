@@ -51,8 +51,39 @@ export function TemplateEngine({ content, design, sections, templateId, themeMod
     const visibleSections = [...sections]
         .filter((s) => s.visible)
         .sort((a, b) => a.order - b.order);
-    const isDark = themeMode === 'dark' ||
-        (themeMode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    // Safe dark-mode detection — avoid SSR/matchMedia crash
+    let isDark = false;
+    if (themeMode === 'dark') {
+        isDark = true;
+    } else if (themeMode === 'auto') {
+        try {
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        } catch {
+            isDark = false;
+        }
+    }
+    if (visibleSections.length === 0) {
+        return (
+            <div
+                key={previewKey}
+                className={`pf-portfolio pf-template-${templateId} min-h-full ${isDark ? 'pf-dark' : ''}`}
+                style={{
+                    ...cssVars,
+                    backgroundColor: colors.background,
+                    color: colors.text,
+                    fontFamily: typography.bodyFont,
+                    fontSize: `${typography.baseSize}px`,
+                    lineHeight: typography.lineHeight,
+                }}
+            >
+                <Layout>
+                    <div className="flex min-h-[40vh] items-center justify-center text-center opacity-40 py-12">
+                        <p style={{ color: 'var(--pf-text-secondary)' }}>No sections visible. Enable sections in the sidebar.</p>
+                    </div>
+                </Layout>
+            </div>
+        );
+    }
     return (<div key={previewKey} className={`pf-portfolio pf-template-${templateId} min-h-full ${isDark ? 'pf-dark' : ''}`} style={{
             ...cssVars,
             backgroundColor: colors.background,

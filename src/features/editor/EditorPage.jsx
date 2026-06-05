@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, Globe, PanelLeftClose, PanelLeft, Loader2, } from 'lucide-react';
+import { Save, Globe, PanelLeftClose, PanelLeft, Loader2, Copy, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -42,6 +42,11 @@ export function EditorPage() {
             }
         }
     }, [portfolio, loadPortfolio]);
+    // Reset published URL when dialog closes so re-opening always shows the form
+    const handleOpenChange = (open) => {
+        if (!open) setPublishedUrl(null);
+        setPublishOpen(open);
+    };
     const handlePublish = async () => {
         if (!portfolioId || !slug.trim())
             return;
@@ -55,6 +60,13 @@ export function EditorPage() {
                 title: 'Publish failed',
                 description: err instanceof Error ? err.message : 'Unknown error',
                 variant: 'destructive',
+            });
+        }
+    };
+    const handleCopyUrl = () => {
+        if (publishedUrl) {
+            navigator.clipboard.writeText(publishedUrl).then(() => {
+                toast({ title: 'Copied!', description: 'URL copied to clipboard.' });
             });
         }
     };
@@ -86,30 +98,34 @@ export function EditorPage() {
       </div>);
     }
     return (<div className="flex h-screen flex-col overflow-hidden bg-background">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+      {/* Header — responsive: collapse labels on small screens */}
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-3 sm:px-4">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Button variant="ghost" size="icon" onClick={toggleSidebar} title={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}>
             {isSidebarOpen ? <PanelLeftClose className="h-4 w-4"/> : <PanelLeft className="h-4 w-4"/>}
           </Button>
-          <span className="font-semibold">PortfolioForge Editor</span>
+          <span className="hidden font-semibold sm:inline">PortfolioForge</span>
           {isSaving && (<span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Loader2 className="h-3 w-3 animate-spin"/> Saving...
+              <Loader2 className="h-3 w-3 animate-spin"/> <span className="hidden sm:inline">Saving...</span>
             </span>)}
-          {lastSaved && !isSaving && (<span className="text-xs text-muted-foreground">
+          {lastSaved && !isSaving && (<span className="hidden text-xs text-muted-foreground sm:inline">
               Saved {new Date(lastSaved).toLocaleTimeString()}
             </span>)}
         </div>
 
-        <DeviceSwitcher device={device} onChange={setDevice}/>
+        {/* Device switcher — hidden on very small screens */}
+        <div className="hidden md:block">
+          <DeviceSwitcher device={device} onChange={setDevice}/>
+        </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Button variant="outline" size="sm" onClick={handleSaveDraft} disabled={saveDraftMutation.isPending}>
-            <Save className="mr-1.5 h-4 w-4"/>
-            Save Draft
+            <Save className="h-4 w-4 sm:mr-1.5"/>
+            <span className="hidden sm:inline">Save Draft</span>
           </Button>
           <Button size="sm" onClick={() => setPublishOpen(true)}>
-            <Globe className="mr-1.5 h-4 w-4"/>
-            Publish
+            <Globe className="h-4 w-4 sm:mr-1.5"/>
+            <span className="hidden sm:inline">Publish</span>
           </Button>
         </div>
       </header>
@@ -121,31 +137,44 @@ export function EditorPage() {
         </PreviewFrame>
       </div>
 
-      <Dialog open={publishOpen} onOpenChange={setPublishOpen}>
+      <Dialog open={publishOpen} onOpenChange={handleOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Publish your portfolio</DialogTitle>
           </DialogHeader>
           {publishedUrl ? (<div className="space-y-4 py-4">
-              <p className="text-sm text-muted-foreground">Your portfolio is live!</p>
-              <a href={publishedUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-                {publishedUrl}
-              </a>
+              <p className="text-sm text-muted-foreground">Your portfolio is live! Share this link:</p>
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2">
+                <a href={publishedUrl} target="_blank" rel="noopener noreferrer" className="flex-1 truncate text-sm text-primary underline">
+                  {publishedUrl}
+                </a>
+                <Button variant="ghost" size="icon" onClick={handleCopyUrl} title="Copy URL">
+                  <Copy className="h-4 w-4"/>
+                </Button>
+                <a href={publishedUrl} target="_blank" rel="noopener noreferrer">
+                  <Button variant="ghost" size="icon" title="Open in new tab">
+                    <ExternalLink className="h-4 w-4"/>
+                  </Button>
+                </a>
+              </div>
             </div>) : (<div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="slug">URL slug</Label>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">/p/</span>
+                  <span className="shrink-0 text-sm text-muted-foreground">/p/</span>
                   <Input id="slug" value={slug} onChange={(e) => setSlug(slugify(e.target.value))} placeholder="your-name"/>
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  Lowercase letters, numbers and hyphens only. Min 3 characters.
+                </p>
               </div>
             </div>)}
           <DialogFooter>
-            {publishedUrl ? (<Button onClick={() => setPublishOpen(false)}>Done</Button>) : (<>
-                <Button variant="outline" onClick={() => setPublishOpen(false)}>
+            {publishedUrl ? (<Button onClick={() => handleOpenChange(false)}>Done</Button>) : (<>
+                <Button variant="outline" onClick={() => handleOpenChange(false)}>
                   Cancel
                 </Button>
-                <Button onClick={handlePublish} disabled={!slug || publishMutation.isPending}>
+                <Button onClick={handlePublish} disabled={!slug || slug.length < 3 || publishMutation.isPending}>
                   {publishMutation.isPending ? 'Publishing...' : 'Publish'}
                 </Button>
               </>)}

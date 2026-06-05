@@ -29,6 +29,7 @@ export function usePublishedSite(slug) {
             }
             return data.data;
         },
+        enabled: !!slug,
         retry: 1,
     });
 }
@@ -121,7 +122,7 @@ export function useUpdatePortfolio() {
 export function usePublishPortfolio() {
     return useMutation({
         mutationFn: async ({ portfolioId, slug, }) => {
-            const { data } = await api.post(`/publish/${portfolioId}`, { slug });
+            const { data } = await api.post(`/publish/portfolio/${portfolioId}`, { slug });
             if (!data.success || !data.data) {
                 throw new Error(data.error ?? 'Publish failed');
             }

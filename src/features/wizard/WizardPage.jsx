@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { motion } from 'motion/react';
-import { Upload, Github, Linkedin, ArrowRight, ArrowLeft, FileText, Loader2, AlertCircle, CheckCircle2, } from 'lucide-react';
+import { Upload, Github, Linkedin, ArrowRight, ArrowLeft, FileText, Loader2, AlertCircle, CheckCircle2, Sparkles, } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -128,7 +128,7 @@ export function WizardPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 py-12">
+      <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 md:py-12">
         {currentStep === 'resume' && (<motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
             <Card>
               <CardHeader>
@@ -273,7 +273,7 @@ export function WizardPage() {
     </div>);
 }
 function SparklesIcon() {
-    return <Loader2 className="ml-2 h-4 w-4 animate-spin"/>;
+    return <Sparkles className="ml-2 h-4 w-4"/>;
 }
 function phaseLabel(phase) {
     switch (phase) {
