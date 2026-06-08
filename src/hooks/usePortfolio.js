@@ -152,3 +152,14 @@ export function useUploadMedia() {
         },
     });
 }
+export function useClassifyProfile() {
+    return useMutation({
+        mutationFn: async ({ portfolioId }) => {
+            const { data } = await api.post(`/portfolio/${portfolioId}/classify`);
+            if (!data.success || !data.data) {
+                throw new Error(data.error ?? 'Classification failed');
+            }
+            return data.data;
+        },
+    });
+}

@@ -1,4 +1,4 @@
-import { Type, Palette, LayoutList, Image, Sun, Zap, LayoutTemplate, } from 'lucide-react';
+import { Type, Palette, LayoutList, Image, Sun, Zap, LayoutTemplate, Wand2, } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEditorStore } from '@/stores/editor.store';
 import { ContentPanel } from './panels/ContentPanel';
@@ -8,6 +8,7 @@ import { MediaPanel } from './panels/MediaPanel';
 import { ThemePanel } from './panels/ThemePanel';
 import { AnimationsPanel } from './panels/AnimationsPanel';
 import { TemplatePanel } from './panels/TemplatePanel';
+import { CustomTemplatePanel } from './panels/CustomTemplatePanel';
 const panels = [
     { id: 'content', label: 'Content', icon: Type },
     { id: 'design', label: 'Design', icon: Palette },
@@ -16,6 +17,7 @@ const panels = [
     { id: 'theme', label: 'Theme', icon: Sun },
     { id: 'animations', label: 'Animations', icon: Zap },
     { id: 'template', label: 'Template', icon: LayoutTemplate },
+    { id: 'custom', label: 'AI Template', icon: Wand2 },
 ];
 export function EditorSidebar() {
     const activePanel = useEditorStore((s) => s.activePanel);
@@ -36,6 +38,7 @@ export function EditorSidebar() {
         {activePanel === 'theme' && <ThemePanel />}
         {activePanel === 'animations' && <AnimationsPanel />}
         {activePanel === 'template' && <TemplatePanel />}
+        {activePanel === 'custom' && <CustomTemplatePanel />}
       </div>
     </aside>);
 }

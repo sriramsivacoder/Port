@@ -1,3 +1,6 @@
+/* Google Fonts — new additions for template families */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;500;700;800&family=EB+Garamond:wght@400;500;700&display=swap');
+
 @import "tailwindcss";
 
 @theme {
@@ -92,7 +95,6 @@
 }
 
 html {
-  /* Prevent horizontal scroll caused by overflowing children */
   overflow-x: hidden;
 }
 
@@ -151,14 +153,10 @@ body {
 
 /* ============================================================
    Portfolio Template Styles — pf-portfolio namespace
-   The TemplateEngine applies .pf-dark for dark mode portfolios.
-   All --pf-* CSS variables are set via inline styles by
-   designToCssVars() in templates/utils.js
    ============================================================ */
 
 .pf-portfolio {
   min-height: 100%;
-  /* Prevent content from overflowing on narrow viewports */
   overflow-x: hidden;
   word-break: break-word;
 }
@@ -167,33 +165,315 @@ body {
   position: relative;
 }
 
-/* Ensure images within portfolio sections don't overflow */
 .pf-portfolio img {
   max-width: 100%;
   height: auto;
 }
 
-/* ---- Dark mode for published portfolios (pf-dark class) ---- */
-/* These override the --pf-* CSS vars set by the design system */
 .pf-dark {
   color-scheme: dark;
 }
 
-/* ---- Template: Modern ---- */
-.pf-template-modern {
+/* ============================================================
+   DEVELOPER FAMILY
+   ============================================================ */
+
+/* ---- dev-terminal ---- */
+.pf-template-dev-terminal {
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--pf-accent) 10%, transparent), transparent 34%),
+    linear-gradient(color-mix(in srgb, var(--pf-border) 28%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--pf-border) 28%, transparent) 1px, transparent 1px),
+    var(--pf-bg);
+  background-size: 28px 28px;
+}
+
+.pf-template-dev-terminal section {
+  border-left: 2px solid var(--pf-accent);
+  padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+  .pf-template-dev-terminal section {
+    padding-left: 1.25rem;
+  }
+}
+
+/* ---- dev-minimal ---- */
+.pf-template-dev-minimal section > h2,
+.pf-template-dev-minimal section h2:first-child {
+  display: inline-flex;
+  border-bottom: 2px solid var(--pf-accent);
+  padding-bottom: 0.3rem;
+}
+
+/* ============================================================
+   STUDENT FAMILY
+   ============================================================ */
+
+/* ---- student-modern ---- */
+.pf-template-student-modern {
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--pf-accent) 10%, transparent), transparent 30%),
+    radial-gradient(circle at 90% 100%, color-mix(in srgb, var(--pf-accent) 8%, transparent), transparent 30%),
     var(--pf-bg);
 }
 
-.pf-template-modern section > h2,
-.pf-template-modern section h2:first-child {
+.pf-template-student-modern section > h2 {
+  display: inline-flex;
+  background: linear-gradient(135deg, var(--pf-accent), color-mix(in srgb, var(--pf-accent) 60%, var(--pf-primary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---- student-campus ---- */
+.pf-template-student-campus {
+  background: var(--pf-bg);
+}
+
+.pf-template-student-campus section {
+  border-left: 3px solid color-mix(in srgb, var(--pf-accent) 40%, transparent);
+  padding-left: 1rem;
+}
+
+/* ============================================================
+   UI/UX DESIGNER FAMILY
+   ============================================================ */
+
+/* ---- designer-casestudy ---- */
+.pf-template-designer-casestudy {
+  background: var(--pf-bg);
+}
+
+.pf-template-designer-casestudy section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.pf-template-designer-casestudy h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+/* ---- designer-showcase ---- */
+@media (min-width: 768px) {
+  .pf-template-designer-showcase section:nth-child(even) {
+    margin-left: clamp(0rem, 5vw, 4rem);
+  }
+  .pf-template-designer-showcase section:nth-child(odd) {
+    margin-right: clamp(0rem, 4vw, 3rem);
+  }
+}
+
+/* ============================================================
+   GRAPHIC DESIGNER FAMILY
+   ============================================================ */
+
+/* ---- graphic-masonry ---- */
+.pf-template-graphic-masonry {
+  background: var(--pf-bg);
+}
+
+.pf-template-graphic-masonry section {
+  border-top: none;
+}
+
+/* ---- graphic-spotlight ---- */
+.pf-template-graphic-spotlight {
+  background: var(--pf-bg);
+}
+
+.pf-template-graphic-spotlight section:first-child {
+  border-top: 0;
+}
+
+.pf-template-graphic-spotlight h1,
+.pf-template-graphic-spotlight h2 {
+  letter-spacing: -0.03em;
+}
+
+/* ============================================================
+   FREELANCER FAMILY
+   ============================================================ */
+
+/* ---- freelancer-convert ---- */
+.pf-template-freelancer-convert {
+  background: var(--pf-bg);
+}
+
+.pf-template-freelancer-convert section > h2 {
   display: inline-flex;
   border-bottom: 3px solid var(--pf-accent);
   padding-bottom: 0.35rem;
 }
 
-/* ---- Template: Developer ---- */
+/* ---- freelancer-agency ---- */
+.pf-template-freelancer-agency {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--pf-accent) 6%, transparent), transparent 40%),
+    var(--pf-bg);
+}
+
+/* ============================================================
+   FOUNDER FAMILY
+   ============================================================ */
+
+/* ---- founder-executive ---- */
+.pf-template-founder-executive {
+  background: var(--pf-bg);
+}
+
+.pf-template-founder-executive section {
+  border-top: 1px solid var(--pf-border);
+}
+
+.pf-template-founder-executive section:first-child {
+  border-top: 0;
+}
+
+.pf-template-founder-executive h1 {
+  letter-spacing: 0;
+}
+
+.pf-template-founder-executive [class*="rounded-"] {
+  border-radius: var(--pf-radius);
+}
+
+/* ---- founder-timeline ---- */
+.pf-template-founder-timeline {
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--pf-accent) 10%, transparent), transparent 35%),
+    var(--pf-bg);
+}
+
+/* ============================================================
+   PHOTOGRAPHER FAMILY
+   ============================================================ */
+
+/* ---- photo-gallery ---- */
+.pf-template-photo-gallery {
+  background: var(--pf-bg);
+}
+
+.pf-template-photo-gallery section {
+  border-top: none;
+}
+
+.pf-template-photo-gallery h1,
+.pf-template-photo-gallery h2 {
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---- photo-story ---- */
+.pf-template-photo-story {
+  background: var(--pf-bg);
+}
+
+.pf-template-photo-story section {
+  border-top: none;
+}
+
+@media (min-width: 640px) {
+  .pf-template-photo-story section:first-child {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* ============================================================
+   CONTENT CREATOR FAMILY
+   ============================================================ */
+
+/* ---- creator-media ---- */
+.pf-template-creator-media {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--pf-accent) 8%, transparent), transparent 20%),
+    var(--pf-bg);
+}
+
+.pf-template-creator-media section > h2 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+/* ---- creator-hub ---- */
+.pf-template-creator-hub {
+  background: var(--pf-bg);
+}
+
+.pf-template-creator-hub section {
+  border-top: 1px solid color-mix(in srgb, var(--pf-border) 50%, transparent);
+}
+
+.pf-template-creator-hub section:first-child {
+  border-top: 0;
+}
+
+/* ============================================================
+   RESEARCHER FAMILY
+   ============================================================ */
+
+/* ---- researcher-academic ---- */
+.pf-template-researcher-academic {
+  background: var(--pf-bg);
+}
+
+.pf-template-researcher-academic section {
+  border-top: 1px solid var(--pf-border);
+}
+
+.pf-template-researcher-academic section:first-child {
+  border-top: 0;
+}
+
+.pf-template-researcher-academic h2 {
+  letter-spacing: 0;
+  font-variant: small-caps;
+}
+
+/* ---- researcher-modern ---- */
+.pf-template-researcher-modern section > h2 {
+  display: inline-flex;
+  border-bottom: 2px solid var(--pf-accent);
+  padding-bottom: 0.25rem;
+}
+
+/* ============================================================
+   HYBRID FAMILY
+   ============================================================ */
+
+/* ---- hybrid-flex ---- */
+.pf-template-hybrid-flex {
+  background: var(--pf-bg);
+}
+
+.pf-template-hybrid-flex section > h2 {
+  display: inline-flex;
+  border-bottom: 2px solid color-mix(in srgb, var(--pf-accent) 50%, transparent);
+  padding-bottom: 0.3rem;
+}
+
+/* ============================================================
+   LEGACY TEMPLATE COMPAT — map old classes to new styles
+   ============================================================ */
+
+/* ---- Notion → dev-minimal ---- */
+.pf-template-notion section > h2,
+.pf-template-notion section h2:first-child {
+  display: inline-flex;
+  border-bottom: 2px solid var(--pf-accent);
+  padding-bottom: 0.3rem;
+}
+
+/* ---- Minimal → dev-minimal ---- */
+.pf-template-minimal section > h2 {
+  display: inline-flex;
+  border-bottom: 2px solid var(--pf-accent);
+  padding-bottom: 0.3rem;
+}
+
+/* ---- Developer → dev-terminal ---- */
 .pf-template-developer {
   background:
     linear-gradient(color-mix(in srgb, var(--pf-border) 28%, transparent) 1px, transparent 1px),
@@ -213,19 +493,31 @@ body {
   }
 }
 
-/* ---- Template: Creative ---- */
-/* Only apply offsets at tablet+ to avoid mobile overflow */
+/* ---- Modern → student-modern ---- */
+.pf-template-modern {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--pf-accent) 10%, transparent), transparent 34%),
+    var(--pf-bg);
+}
+
+.pf-template-modern section > h2,
+.pf-template-modern section h2:first-child {
+  display: inline-flex;
+  border-bottom: 3px solid var(--pf-accent);
+  padding-bottom: 0.35rem;
+}
+
+/* ---- Creative → designer-showcase ---- */
 @media (min-width: 768px) {
   .pf-template-creative section:nth-child(even) {
     margin-left: clamp(0rem, 5vw, 4rem);
   }
-
   .pf-template-creative section:nth-child(odd) {
     margin-right: clamp(0rem, 4vw, 3rem);
   }
 }
 
-/* ---- Template: Editorial ---- */
+/* ---- Editorial → researcher-academic ---- */
 .pf-template-editorial {
   background: var(--pf-bg);
 }
@@ -260,7 +552,7 @@ body {
   letter-spacing: 0;
 }
 
-/* ---- Template: Neon ---- */
+/* ---- Neon → dev-terminal ---- */
 .pf-template-neon {
   background:
     radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--pf-accent) 20%, transparent), transparent 32%),
@@ -280,7 +572,7 @@ body {
   text-transform: uppercase;
 }
 
-/* ---- Template: Executive ---- */
+/* ---- Executive → founder-executive ---- */
 .pf-template-executive {
   background: var(--pf-bg);
 }

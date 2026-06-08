@@ -1,75 +1,74 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { generateId } from '@/lib/utils';
-import { DEFAULT_SECTION_ORDER, SECTION_LABELS } from '@/lib/constants';
-import { TEMPLATE_COLORS, TEMPLATE_TYPOGRAPHY } from '@/shared/template.js';
-function createDefaultDesign(templateId = 'notion') {
-    const colors = (TEMPLATE_COLORS[templateId] ?? TEMPLATE_COLORS.notion).light;
-    const typography = TEMPLATE_TYPOGRAPHY[templateId] ?? TEMPLATE_TYPOGRAPHY.notion;
+import { SECTION_LABELS } from '@/lib/constants';
+import { getTemplateConfig, getDefaultSectionsForTemplate } from '@/templates/templateRegistry';
+
+function createDefaultDesign(templateId = 'dev-minimal') {
+    const config = getTemplateConfig(templateId);
+    const colors = config.colors.light;
+    const typography = { ...config.typography };
     return {
         colors,
         typography,
-        spacing: {
-            sectionPadding: 64,
-            contentMaxWidth: templateId === 'creative' || templateId === 'editorial' ? 1100 : templateId === 'executive' ? 1040 : 960,
-            cardGap: templateId === 'executive' ? 18 : 24,
-        },
-        borderShadow: {
-            borderRadius: templateId === 'notion' || templateId === 'neon' ? 8 : templateId === 'executive' ? 6 : 12,
-            borderWidth: templateId === 'neon' ? 2 : 1,
-            shadowIntensity: templateId === 'minimal' || templateId === 'executive' ? 'subtle' : 'medium',
-        },
+        spacing: { ...config.spacing },
+        borderShadow: { ...config.borderShadow },
         animations: {},
     };
 }
-function createDefaultSections() {
-    return DEFAULT_SECTION_ORDER.map((type, index) => ({
+
+function createDefaultSections(templateId = 'dev-minimal') {
+    const sectionTypes = getDefaultSectionsForTemplate(templateId);
+    return sectionTypes.map((type, index) => ({
         id: generateId(),
         type,
-        title: SECTION_LABELS[type],
+        title: SECTION_LABELS[type] ?? type,
         visible: true,
         order: index,
         animation: { type: 'rise', duration: 650, delay: index * 60, distance: 28, easing: 'smooth', repeatOnScroll: false },
     }));
 }
+
 export const usePortfolioStore = create()(immer((set) => ({
     portfolioId: null,
     content: null,
     design: createDefaultDesign(),
     sections: createDefaultSections(),
-    selectedTemplate: 'notion',
+    selectedTemplate: 'dev-minimal',
+    templateFamily: 'developer',
+    professionalCategory: null,
     themeMode: 'light',
     profileImageUrl: null,
     isDirty: false,
+
     setPortfolioId: (id) => set((s) => {
         s.portfolioId = id;
     }),
+
     loadPortfolio: (portfolio) => set((s) => {
         s.portfolioId = portfolio._id ?? null;
         s.content = portfolio.generatedContent;
-        s.design =
-            portfolio.designSettings ??
-                createDefaultDesign(portfolio.selectedTemplate ??
-                    'notion');
-        s.sections =
-            portfolio.sections?.length
-                ? portfolio.sections
-                : createDefaultSections();
-        s.selectedTemplate =
-            portfolio.selectedTemplate ??
-                'notion';
-        s.themeMode =
-            portfolio.themeMode ?? 'light';
-        s.profileImageUrl =
-            portfolio.profileImageUrl ?? null;
+        const tplId = portfolio.selectedTemplate ?? 'dev-minimal';
+        const config = getTemplateConfig(tplId);
+        s.design = portfolio.designSettings ?? createDefaultDesign(tplId);
+        s.sections = portfolio.sections?.length
+            ? portfolio.sections
+            : createDefaultSections(tplId);
+        s.selectedTemplate = tplId;
+        s.templateFamily = config.family;
+        s.professionalCategory = portfolio.professionalCategory ?? null;
+        s.themeMode = portfolio.themeMode ?? 'light';
+        s.profileImageUrl = portfolio.profileImageUrl ?? null;
         s.isDirty = false;
     }),
+
     updateContent: (patch) => set((s) => {
         if (s.content) {
             Object.assign(s.content, patch);
             s.isDirty = true;
         }
     }),
+
     updateDesign: (patch) => set((s) => {
         if (!s.design) {
             s.design = createDefaultDesign(s.selectedTemplate);
@@ -91,27 +90,52 @@ export const usePortfolioStore = create()(immer((set) => ({
         }
         s.isDirty = true;
     }),
+
     setSelectedTemplate: (template) => set((s) => {
+        const config = getTemplateConfig(template);
         s.selectedTemplate = template;
+        s.templateFamily = config.family;
         // Apply template default colors and typography
-        const templateColors = TEMPLATE_COLORS[template] ?? TEMPLATE_COLORS.notion;
-        s.design.colors = templateColors[s.themeMode === 'dark' ? 'dark' : 'light'];
-        s.design.typography = TEMPLATE_TYPOGRAPHY[template] ?? TEMPLATE_TYPOGRAPHY.notion;
-        s.design.spacing = createDefaultDesign(template).spacing;
-        s.design.borderShadow = createDefaultDesign(template).borderShadow;
+        s.design.colors = config.colors[s.themeMode === 'dark' ? 'dark' : 'light'];
+        s.design.typography = { ...config.typography };
+        s.design.spacing = { ...config.spacing };
+        s.design.borderShadow = { ...config.borderShadow };
+        // Update sections to match the new template's default set
+        const currentTypes = new Set(s.sections.map((sec) => sec.type));
+        const newDefaults = getDefaultSectionsForTemplate(template);
+        // Add any new section types that this template needs but aren't present
+        for (const type of newDefaults) {
+            if (!currentTypes.has(type)) {
+                s.sections.push({
+                    id: generateId(),
+                    type,
+                    title: SECTION_LABELS[type] ?? type,
+                    visible: true,
+                    order: s.sections.length,
+                    animation: { type: 'rise', duration: 650, delay: 0, distance: 28, easing: 'smooth', repeatOnScroll: false },
+                });
+            }
+        }
         s.isDirty = true;
     }),
+
     setThemeMode: (mode) => set((s) => {
         s.themeMode = mode;
         const colorMode = mode === 'dark' ? 'dark' : 'light';
-        const templateColors = TEMPLATE_COLORS[s.selectedTemplate] ?? TEMPLATE_COLORS.notion;
-        s.design.colors = templateColors[colorMode];
+        const config = getTemplateConfig(s.selectedTemplate);
+        s.design.colors = config.colors[colorMode];
         s.isDirty = true;
     }),
+
+    setProfessionalCategory: (category) => set((s) => {
+        s.professionalCategory = category;
+    }),
+
     setProfileImageUrl: (url) => set((s) => {
         s.profileImageUrl = url;
         s.isDirty = true;
     }),
+
     reorderSections: (fromIndex, toIndex) => set((s) => {
         const item = s.sections[fromIndex];
         if (!item)
@@ -123,6 +147,7 @@ export const usePortfolioStore = create()(immer((set) => ({
         });
         s.isDirty = true;
     }),
+
     toggleSection: (sectionId) => set((s) => {
         const sec = s.sections.find((sec) => sec.id === sectionId);
         if (sec) {
@@ -130,6 +155,7 @@ export const usePortfolioStore = create()(immer((set) => ({
             s.isDirty = true;
         }
     }),
+
     duplicateSection: (sectionId) => set((s) => {
         const idx = s.sections.findIndex((sec) => sec.id === sectionId);
         const original = s.sections[idx];
@@ -147,11 +173,12 @@ export const usePortfolioStore = create()(immer((set) => ({
             s.isDirty = true;
         }
     }),
+
     addSection: (type) => set((s) => {
         const newSection = {
             id: generateId(),
             type,
-            title: SECTION_LABELS[type],
+            title: SECTION_LABELS[type] ?? type,
             visible: true,
             order: s.sections.length,
             animation: { type: 'rise', duration: 650, delay: s.sections.length * 60, distance: 28, easing: 'smooth', repeatOnScroll: false },
@@ -159,6 +186,33 @@ export const usePortfolioStore = create()(immer((set) => ({
         s.sections.push(newSection);
         s.isDirty = true;
     }),
+
+    replaceSectionsForTemplate: (templateId, sectionTypes) => set((s) => {
+        const nextTypes = Array.isArray(sectionTypes) && sectionTypes.length
+            ? sectionTypes
+            : getDefaultSectionsForTemplate(templateId);
+        const existingByType = new Map(s.sections.map((section) => [section.type, section]));
+        s.sections = nextTypes.map((type, index) => {
+            const existing = existingByType.get(type);
+            return {
+                id: existing?.id ?? generateId(),
+                type,
+                title: SECTION_LABELS[type] ?? type,
+                visible: existing?.visible ?? true,
+                order: index,
+                animation: existing?.animation ?? {
+                    type: 'rise',
+                    duration: 650,
+                    delay: index * 60,
+                    distance: 28,
+                    easing: 'smooth',
+                    repeatOnScroll: false,
+                },
+            };
+        });
+        s.isDirty = true;
+    }),
+
     removeSection: (sectionId) => set((s) => {
         s.sections = s.sections.filter((sec) => sec.id !== sectionId);
         s.sections.forEach((sec, i) => {
@@ -166,6 +220,7 @@ export const usePortfolioStore = create()(immer((set) => ({
         });
         s.isDirty = true;
     }),
+
     markClean: () => set((s) => {
         s.isDirty = false;
     }),
